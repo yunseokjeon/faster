@@ -3,13 +3,21 @@ const ReadingCard = () => {
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
             {/* 메인 카드 컨테이너 */}
             <div className="w-[800px] relative">
+                {/* 프로그레스 바 추가 */}
+                <div className="w-full h-4 bg-yellow-200 rounded-t-xl overflow-hidden">
+                    <div 
+                        className="h-full bg-gray-500 rounded-r-xl" 
+                        style={{ width: '60%' }} // 진행률에 따라 조절
+                    />
+                </div>
+
                 {/* 상단 노란색 카드 */}
-                <div className="bg-yellow-400 rounded-xl px-8 py-6 mb-4"> 
-                    <div className="flex justify-between items-center mb-4">
+                <div className="bg-yellow-400 rounded-b-xl px-12 py-8 mb-4"> 
+                    <div className="flex justify-between items-center mb-6">
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">1/5</span>
                         <span className="text-lg">Total Timer 0:40:00</span>
                     </div>
-                    <p className="text-2xl font-medium w-full">
+                    <p className="text-3xl font-medium w-full">
                         'Your brain has amazing abilities, but it did not come with an instruction manual.'
                     </p>
                 </div>
