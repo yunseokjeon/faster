@@ -28,22 +28,18 @@ const ReadingCard = () => {
                         <div className="bg-white rounded-xl border-2 border-gray-300 border-dashed p-8">
                             <div className="relative">
                                 <label className="absolute -top-3 left-4 bg-white px-2 text-sm text-gray-500">Text Box</label>
-                                <div className="border-2 border-gray-300 rounded-lg p-6">
-                                    <div className="space-y-6 text-gray-700">
-                                        <p className="leading-relaxed">
-                                            'Your brain has amazing abilities, but it did not come with an instruction manual. You'll find that manual in A Mind for Numbers. Whether you're a novice or an expert, you will find great new ways to improve your skills and techniques for learning, especially related to math and science.'
-                                        </p>
-                                        <p className="leading-relaxed">
-                                            Henri Poincaré was a nineteenth-century mathematician who once described how he cracked a difficult mathematical problem that he had been intensively working on for weeks without success. He took a vacation.
-                                        </p>
-                                    </div>
-                                </div>
+                                <textarea
+                                    className="w-full min-h-[200px] border-2 border-gray-300 rounded-lg p-6 text-gray-700 leading-relaxed resize-none focus:outline-none focus:border-yellow-400"
+                                    defaultValue={`'Your brain has amazing abilities, but it did not come with an instruction manual. You'll find that manual in A Mind for Numbers. Whether you're a novice or an expert, you will find great new ways to improve your skills and techniques for learning, especially related to math and science.'
+
+Henri Poincaré was a nineteenth-century mathematician who once described how he cracked a difficult mathematical problem that he had been intensively working on for weeks without success. He took a vacation.`}
+                                />
                             </div>
                         </div>
                     </div>
 
                     {/* 오른쪽 컨트롤 버튼 영역 */}
-                    <div className="flex flex-col gap-3 min-w-[100px]">
+                    <div className="flex flex-col gap-3 w-[100px]">
                         <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
                             START
                         </button>
@@ -57,7 +53,32 @@ const ReadingCard = () => {
                             <span className="absolute -top-2.5 left-4 bg-gray-100 px-2 text-xs text-gray-500">
                                 Speed
                             </span>
-                            <div className="text-center font-medium pt-1">160</div>
+                            <input
+                                type="number"
+                                defaultValue={160}
+                                step="1"
+                                min="1"
+                                max="300"
+                                onKeyDown={(e) => {
+                                    // 소수점(.) 입력 방지
+                                    if (e.key === '.') {
+                                        e.preventDefault();
+                                    }
+                                }}
+                                onChange={(e) => {
+                                    // 입력된 값을 정수로 변환
+                                    const value = parseInt(e.target.value);
+                                    // 유효한 양의 정수가 아니거나 범위를 벗어나면 조정
+                                    if (isNaN(value) || value < 1) {
+                                        e.target.value = '1';
+                                    } else if (value > 300) {
+                                        e.target.value = '300';
+                                    } else {
+                                        e.target.value = value.toString();
+                                    }
+                                }}
+                                className="w-full text-center font-medium pt-1 bg-transparent focus:outline-none"
+                            />
                         </div>
                     </div>
                 </div>
