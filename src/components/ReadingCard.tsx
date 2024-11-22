@@ -5,14 +5,14 @@ const ReadingCard = () => {
             <div className="w-[800px] relative">
                 {/* 프로그레스 바 추가 */}
                 <div className="w-full h-4 bg-yellow-200 rounded-t-xl overflow-hidden">
-                    <div 
-                        className="h-full bg-gray-500 rounded-r-xl" 
+                    <div
+                        className="h-full bg-gray-500 rounded-r-xl"
                         style={{ width: '60%' }} // 진행률에 따라 조절
                     />
                 </div>
 
                 {/* 상단 노란색 카드 */}
-                <div className="bg-yellow-400 rounded-b-xl px-12 py-8 mb-4"> 
+                <div className="bg-yellow-400 rounded-b-xl px-12 py-8 mb-4">
                     <div className="flex justify-between items-center mb-6">
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">1/5</span>
                         <span className="text-lg">Total Timer 0:40:00</span>
@@ -43,19 +43,21 @@ const ReadingCard = () => {
                     </div>
 
                     {/* 오른쪽 컨트롤 버튼 영역 */}
-                    <div className="flex flex-col gap-2">
-                        <button className="bg-gray-100 hover:bg-gray-200 px-4 py-1 rounded-md text-sm w-[70px] text-gray-700">
+                    <div className="flex flex-col gap-3 min-w-[100px]">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
                             START
                         </button>
-                        <button className="bg-gray-100 hover:bg-gray-200 px-4 py-1 rounded-md text-sm w-[70px] text-gray-700">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
                             PAUSE
                         </button>
-                        <button className="bg-gray-100 hover:bg-gray-200 px-4 py-1 rounded-md text-sm w-[70px] text-gray-700">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
                             RESET
                         </button>
-                        <div className="bg-gray-100 px-4 py-1 rounded-md text-sm w-[70px] mt-2">
-                            <div className="text-xs text-gray-600">Speed</div>
-                            <div className="text-center text-gray-700">160</div>
+                        <div className="relative bg-gray-100 rounded-md border border-gray-300 px-6 py-2">
+                            <span className="absolute -top-2.5 left-4 bg-gray-100 px-2 text-xs text-gray-500">
+                                Speed
+                            </span>
+                            <div className="text-center font-medium pt-1">160</div>
                         </div>
                     </div>
                 </div>
