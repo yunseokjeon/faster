@@ -18,3 +18,17 @@ export const inputTextToArray = (text: string) => {
     }).filter(sentence => sentence);
     return array;
 };
+
+export const getTotalWords = (text: string) => {
+    let wordCount = 0;
+
+    text.split('.').map(sentence => {
+        sentence.split(' ').map(word => {
+            if (word.length > 0) {
+                wordCount++;
+            }
+        });
+    });
+
+    return wordCount;
+}
