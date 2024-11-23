@@ -1,4 +1,28 @@
+import { useState, ChangeEvent } from "react";
+
 const ReadingCard = () => {
+
+    const [text, setText] = useState('');
+
+    const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+        const value = e.target.value;
+
+        // 영어 알파벳과 모든 특수문자만 허용
+        const regex = /^[a-zA-Z\s\W]*$/;
+        
+        if (regex.test(value) && value.length <= 5000) {
+            setText(value);
+        }
+    };
+
+    const inputTextToArray = () => {
+        const array = text.split('.').map(sentence => {
+            const trimmedSentence = sentence.trim();
+            return trimmedSentence ? `${trimmedSentence}.` : trimmedSentence; // 문장이 비어있지 않으면 마침표 추가
+        }).filter(sentence => sentence);
+        return array;
+    };
+
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
             {/* 메인 카드 컨테이너 */}
@@ -30,9 +54,10 @@ const ReadingCard = () => {
                                 <label className="absolute -top-3 left-4 bg-white px-2 text-sm text-gray-500">Text Box</label>
                                 <textarea
                                     className="w-full min-h-[200px] border-2 border-gray-300 rounded-lg p-6 text-gray-700 leading-relaxed resize-none focus:outline-none focus:border-yellow-400"
-                                    defaultValue={`'Your brain has amazing abilities, but it did not come with an instruction manual. You'll find that manual in A Mind for Numbers. Whether you're a novice or an expert, you will find great new ways to improve your skills and techniques for learning, especially related to math and science.'
-
-Henri Poincaré was a nineteenth-century mathematician who once described how he cracked a difficult mathematical problem that he had been intensively working on for weeks without success. He took a vacation.`}
+                                    value={text}
+                                    onChange={handleTextChange}
+                                    onBlur={inputTextToArray}
+                                    maxLength={5000}
                                 />
                             </div>
                         </div>
