@@ -1,27 +1,11 @@
 import { useState, ChangeEvent } from "react";
+import { handleTextChange, inputTextToArray } from "../utils/textUtils";
 
 const ReadingCard = () => {
 
     const [text, setText] = useState('');
 
-    const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        const value = e.target.value;
-
-        // 영어 알파벳과 모든 특수문자만 허용
-        const regex = /^[a-zA-Z\s\W]*$/;
-        
-        if (regex.test(value) && value.length <= 5000) {
-            setText(value);
-        }
-    };
-
-    const inputTextToArray = () => {
-        const array = text.split('.').map(sentence => {
-            const trimmedSentence = sentence.trim();
-            return trimmedSentence ? `${trimmedSentence}.` : trimmedSentence; // 문장이 비어있지 않으면 마침표 추가
-        }).filter(sentence => sentence);
-        return array;
-    };
+    const onTextChange = handleTextChange(setText);
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -55,8 +39,8 @@ const ReadingCard = () => {
                                 <textarea
                                     className="w-full min-h-[200px] border-2 border-gray-300 rounded-lg p-6 text-gray-700 leading-relaxed resize-none focus:outline-none focus:border-yellow-400"
                                     value={text}
-                                    onChange={handleTextChange}
-                                    onBlur={inputTextToArray}
+                                    onChange={onTextChange}
+                                    onBlur={() => inputTextToArray(text)}
                                     maxLength={5000}
                                 />
                             </div>
