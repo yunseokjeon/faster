@@ -16,6 +16,5 @@ export const inputTextToArray = (text: string) => {
         const trimmedSentence = sentence.trim();
         return trimmedSentence ? `${trimmedSentence}.` : trimmedSentence; // 문장이 비어있지 않으면 마침표 추가
     }).filter(sentence => sentence);
-    console.log(array);
     return array;
 };

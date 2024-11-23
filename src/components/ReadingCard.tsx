@@ -25,7 +25,7 @@ const ReadingCard = () => {
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">1/5</span>
                         <span className="text-lg">Total Timer 0:40:00</span>
                     </div>
-                    <p className="text-3xl font-medium w-full">
+                    <p className="text-3xl font-medium w-full min-h-[100px]">
                         'Your brain has amazing abilities, but it did not come with an instruction manual.'
                     </p>
                 </div>
