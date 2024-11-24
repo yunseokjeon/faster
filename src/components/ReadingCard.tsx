@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from "react";
 import { handleTextChange, inputTextToArray } from "../utils/textUtils";
 import { onTextInputCompleted } from "../utils/commonUtils";
+import { secondsToHMS, startTimer } from "../utils/timeUtils";
 
 
 const ReadingCard = () => {
@@ -8,13 +9,27 @@ const ReadingCard = () => {
     const [text, setText] = useState('');
     const [speed, setSpeed] = useState(160);
     const [sentenceArray, setSentenceArray] = useState(['']);
-    const [neededSeconds, setNeededSeconds] = useState(0);
+    const [totalSeconds, setTotalSeconds] = useState(0);
     const [totalWordsNumber, setTotalWordsNumber] = useState(0);
     const [currentSentenceIndex, setCurrentSentenceIndex] = useState(1);
+    const [isRunning, setIsRunning] = useState(false);
+    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // intervalId 상태 추가
 
     const onTextChange = handleTextChange(setText);
 
-    console.log(sentenceArray.length);
+    const handleStart = () => {
+        const id = startTimer(setTotalSeconds, setIsRunning); // Ensure startTimer returns NodeJS.Timeout
+        setIntervalId(id); // intervalId 저장
+    };
+
+    const handlePause = () => {
+        if (intervalId) {
+            clearInterval(intervalId); // 타이머 정지
+            setIsRunning(false); // 상태 업데이트
+            setIntervalId(null); // intervalId 초기화
+        }
+    };
+
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -33,7 +48,7 @@ const ReadingCard = () => {
                     <div className="flex justify-between items-center mb-6">
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">
                             {currentSentenceIndex} / {sentenceArray[0] == '' ? 0 : sentenceArray.length}</span>
-                        <span className="text-lg">Total Timer 0:40:00</span>
+                        <span className="text-lg">Total Timer {secondsToHMS(totalSeconds)}</span>
                     </div>
                     <p className="text-3xl font-medium w-full min-h-[100px]">
                         'Your brain has amazing abilities, but it did not come with an instruction manual.'
@@ -50,8 +65,8 @@ const ReadingCard = () => {
                                     className="w-full min-h-[200px] border-2 border-gray-300 rounded-lg p-6 text-gray-700 leading-relaxed resize-none focus:outline-none focus:border-yellow-400"
                                     value={text}
                                     onChange={onTextChange}
-                                    onBlur={() => onTextInputCompleted(text, speed, setNeededSeconds, setTotalWordsNumber, setSentenceArray)}
-                                    maxLength={5000}
+                                    onBlur={() => onTextInputCompleted(text, speed, setTotalSeconds, setTotalWordsNumber, setSentenceArray)}
+                                    maxLength={500000}
                                 />
                             </div>
                         </div>
@@ -59,10 +74,14 @@ const ReadingCard = () => {
 
                     {/* 오른쪽 컨트롤 버튼 영역 */}
                     <div className="flex flex-col gap-3 w-[100px]">
-                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300"
+                            onClick={handleStart}
+                        >
                             START
                         </button>
-                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300"
+                            onClick={handlePause}
+                        >
                             PAUSE
                         </button>
                         <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
@@ -98,6 +117,7 @@ const ReadingCard = () => {
 
                                     value = parseInt(e.target.value);
                                     setSpeed(value);
+                                    onTextInputCompleted(text, value, setTotalSeconds, setTotalWordsNumber, setSentenceArray);
                                 }}
                                 className="w-full text-center font-medium pt-1 bg-transparent focus:outline-none"
                             />
