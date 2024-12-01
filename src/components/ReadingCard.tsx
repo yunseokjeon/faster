@@ -1,35 +1,110 @@
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect } from "react";
 import { handleTextChange, inputTextToArray } from "../utils/textUtils";
 import { onTextInputCompleted } from "../utils/commonUtils";
 import { secondsToHMS, startTimer } from "../utils/timeUtils";
 
-
 const ReadingCard = () => {
-
     const [text, setText] = useState('');
     const [speed, setSpeed] = useState(160);
     const [sentenceArray, setSentenceArray] = useState(['']);
     const [totalSeconds, setTotalSeconds] = useState(0);
     const [totalWordsNumber, setTotalWordsNumber] = useState(0);
-    const [currentSentenceIndex, setCurrentSentenceIndex] = useState(1);
+    const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
-    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null); // intervalId 상태 추가
+    const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+    const [progressWidth, setProgressWidth] = useState('100%');
+    const [currentSentenceTimeLeft, setCurrentSentenceTimeLeft] = useState(0);
+    const [sentenceStartTime, setSentenceStartTime] = useState(0);
 
     const onTextChange = handleTextChange(setText);
 
     const handleStart = () => {
-        const id = startTimer(setTotalSeconds, setIsRunning); // Ensure startTimer returns NodeJS.Timeout
-        setIntervalId(id); // intervalId 저장
+        if (isRunning || sentenceArray.length === 0) {
+            return;
+        }
+
+        // 전체 시간을 문장 수로 나누어 각 문장당 시간 계산
+        const timePerSentence = Math.ceil(totalSeconds / sentenceArray.length);
+        setCurrentSentenceTimeLeft(timePerSentence);
+        setSentenceStartTime(timePerSentence);
+
+        // Total Timer를 위한 타이머
+        const totalTimerInterval = setInterval(() => {
+            setTotalSeconds(prev => {
+                if (prev <= 0) {
+                    clearInterval(totalTimerInterval);
+                    return 0;
+                }
+                return prev - 1;
+            });
+        }, 1000);
+
+        // 문장별 타이머 (프로그레스 바용)
+        const progressInterval = setInterval(() => {
+            setCurrentSentenceTimeLeft(prev => {
+                if (prev <= 0) return 0;
+                return prev - 1;
+            });
+        }, 1000);
+
+        // 문장 변경 타이머
+        const id = setInterval(() => {
+            setCurrentSentenceIndex(prevIndex => {
+                if (prevIndex >= sentenceArray.length - 1) {
+                    clearInterval(id);
+                    clearInterval(progressInterval);
+                    clearInterval(totalTimerInterval);
+                    setIsRunning(false);
+                    return prevIndex;
+                }
+                // 새로운 문장으로 넘어갈 때 타이머 리셋
+                setCurrentSentenceTimeLeft(timePerSentence);
+                return prevIndex + 1;
+            });
+        }, timePerSentence * 1000);
+
+        setIntervalId(id);
+        setIsRunning(true);
     };
 
     const handlePause = () => {
-        if (intervalId) {
-            clearInterval(intervalId); // 타이머 정지
-            setIsRunning(false); // 상태 업데이트
-            setIntervalId(null); // intervalId 초기화
+        // 모든 활성 타이머를 중지
+        const intervals = window.setInterval(() => {}, 0);
+        for (let i = 0; i <= intervals; i++) {
+            clearInterval(i);
         }
+        setIsRunning(false);
+        setIntervalId(null);
     };
 
+    const handleReset = () => {
+        // 모든 활성 타이머를 중지
+        const intervals = window.setInterval(() => {}, 0);
+        for (let i = 0; i <= intervals; i++) {
+            clearInterval(i);
+        }
+        setCurrentSentenceIndex(0);
+        setIsRunning(false);
+        setIntervalId(null);
+        setCurrentSentenceTimeLeft(0);
+        setSentenceStartTime(0);
+        onTextInputCompleted(text, speed, setTotalSeconds, setTotalWordsNumber, setSentenceArray);
+    };
+
+    useEffect(() => {
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [intervalId]);
+
+    useEffect(() => {
+        if (!sentenceStartTime) return;
+        
+        const progress = (currentSentenceTimeLeft / sentenceStartTime) * 100;
+        setProgressWidth(`${progress}%`);
+    }, [currentSentenceTimeLeft, sentenceStartTime]);
 
     return (
         <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
@@ -39,7 +114,7 @@ const ReadingCard = () => {
                 <div className="w-full h-4 bg-yellow-200 rounded-t-xl overflow-hidden">
                     <div
                         className="h-full bg-gray-500 rounded-r-xl"
-                        style={{ width: '60%' }} // 진행률에 따라 조절
+                        style={{ width: progressWidth }}
                     />
                 </div>
 
@@ -47,11 +122,12 @@ const ReadingCard = () => {
                 <div className="bg-yellow-400 rounded-b-xl px-12 py-8 mb-4">
                     <div className="flex justify-between items-center mb-6">
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">
-                            {currentSentenceIndex} / {sentenceArray[0] == '' ? 0 : sentenceArray.length}</span>
+                            {currentSentenceIndex + 1} / {sentenceArray.length}
+                        </span>
                         <span className="text-lg">Total Timer {secondsToHMS(totalSeconds)}</span>
                     </div>
                     <p className="text-3xl font-medium w-full min-h-[100px]">
-                        'Your brain has amazing abilities, but it did not come with an instruction manual.'
+                        {sentenceArray[currentSentenceIndex]}
                     </p>
                 </div>
 
@@ -84,7 +160,9 @@ const ReadingCard = () => {
                         >
                             PAUSE
                         </button>
-                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300">
+                        <button className="bg-gray-100 hover:bg-gray-200 px-6 py-2 rounded-md text-sm border border-gray-300"
+                            onClick={handleReset}
+                        >
                             RESET
                         </button>
                         <div className="relative bg-gray-100 rounded-md border border-gray-300 px-6 py-2">

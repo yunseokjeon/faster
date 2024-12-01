@@ -6,12 +6,14 @@ export const onTextInputCompleted = (text: string,
     setTotalWordsNumber: React.Dispatch<React.SetStateAction<number>>,
     setSentenceArray: React.Dispatch<React.SetStateAction<string[]>>) => {
 
-
     const sentenceArray = inputTextToArray(text);
     const totalWordsNumber = getTotalWords(text);
-    const totalSeconds = Math.ceil(totalWordsNumber / speed) < 60 ? 60 : Math.ceil(totalWordsNumber / speed);
+    
+    // 분당 단어 수(speed)를 기반으로 초 단위 계산
+    const calculatedSeconds = Math.ceil((totalWordsNumber / speed) * 60);
+    const totalSeconds = Math.max(60, calculatedSeconds); // 최소 60초
 
     setTotalSeconds(totalSeconds);
     setTotalWordsNumber(totalWordsNumber);
     setSentenceArray(sentenceArray);
-}
+};
