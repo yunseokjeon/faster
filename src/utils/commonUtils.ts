@@ -11,9 +11,8 @@ export const onTextInputCompleted = (text: string,
     
     // 분당 단어 수(speed)를 기반으로 초 단위 계산
     const calculatedSeconds = Math.ceil((totalWordsNumber / speed) * 60);
-    const totalSeconds = Math.max(60, calculatedSeconds); // 최소 60초
 
-    setTotalSeconds(totalSeconds);
+    setTotalSeconds(calculatedSeconds);
     setTotalWordsNumber(totalWordsNumber);
     setSentenceArray(sentenceArray);
 };

@@ -23,10 +23,13 @@ const ReadingCard = () => {
             return;
         }
 
-        // 전체 시간을 문장 수로 나누어 각 문장당 시간 계산
         const timePerSentence = Math.ceil(totalSeconds / sentenceArray.length);
-        setCurrentSentenceTimeLeft(timePerSentence);
-        setSentenceStartTime(timePerSentence);
+        
+        // 일시정지 상태가 아닐 때만 현재 문장의 시간을 새로 설정
+        if (currentSentenceTimeLeft === 0) {
+            setCurrentSentenceTimeLeft(timePerSentence);
+            setSentenceStartTime(timePerSentence);
+        }
 
         // Total Timer를 위한 타이머
         const totalTimerInterval = setInterval(() => {
@@ -75,11 +78,12 @@ const ReadingCard = () => {
         }
         setIsRunning(false);
         setIntervalId(null);
+        // currentSentenceTimeLeft는 유지 (리셋하지 않음)
     };
 
     const handleReset = () => {
         // 모든 활성 타이머를 중지
-        const intervals = window.setInterval(() => {}, 0);
+        const intervals = window.setInterval(() => { }, 0);
         for (let i = 0; i <= intervals; i++) {
             clearInterval(i);
         }
@@ -89,6 +93,7 @@ const ReadingCard = () => {
         setCurrentSentenceTimeLeft(0);
         setSentenceStartTime(0);
         onTextInputCompleted(text, speed, setTotalSeconds, setTotalWordsNumber, setSentenceArray);
+        setProgressWidth('100%');
     };
 
     useEffect(() => {
@@ -101,7 +106,7 @@ const ReadingCard = () => {
 
     useEffect(() => {
         if (!sentenceStartTime) return;
-        
+
         const progress = (currentSentenceTimeLeft / sentenceStartTime) * 100;
         setProgressWidth(`${progress}%`);
     }, [currentSentenceTimeLeft, sentenceStartTime]);
@@ -122,7 +127,7 @@ const ReadingCard = () => {
                 <div className="bg-yellow-400 rounded-b-xl px-12 py-8 mb-4">
                     <div className="flex justify-between items-center mb-6">
                         <span className="bg-yellow-200 px-3 py-1 rounded-full text-sm">
-                            {currentSentenceIndex + 1} / {sentenceArray.length}
+                            {sentenceArray[0] != '' ? `${currentSentenceIndex + 1} / ${sentenceArray.length}` : '0 / 0'}
                         </span>
                         <span className="text-lg">Total Timer {secondsToHMS(totalSeconds)}</span>
                     </div>
