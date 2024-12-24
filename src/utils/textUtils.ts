@@ -11,12 +11,21 @@ export const handleTextChange = (setText: React.Dispatch<React.SetStateAction<st
     }
 };
 
-export const inputTextToArray = (text: string) => {
-    const array = text.split(/(?<=[.?!])\s*/).map(sentence => { // 정규 표현식으로 문장 구분 기호 기준으로 쪼갬
-        const trimmedSentence = sentence.trim();
-        return trimmedSentence ? trimmedSentence : trimmedSentence; // 문장이 비어있지 않으면 그대로 반환
-    }).filter(sentence => sentence);
-    return array;
+export const inputTextToArray = (text: string): string[] => {
+    // 문장의 끝을 기준으로 분리 (마침표, 물음표, 느낌표)
+    const sentences = text.split(/([.!?]+)/)
+        .reduce((acc: string[], current: string, index: number, array: string[]) => {
+            // 마지막 요소가 아니고, 다음 요소가 구두점인 경우
+            if (index % 2 === 0 && index < array.length - 1) {
+                // 현재 문장과 구두점을 합쳐서 배열에 추가
+                acc.push(current + array[index + 1]);
+            }
+            return acc;
+        }, [])
+        .map(sentence => sentence.trim())
+        .filter(sentence => sentence.length > 0); // 빈 문장 제거
+
+    return sentences;
 };
 
 export const getTotalWords = (text: string) => {
