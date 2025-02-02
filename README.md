@@ -2,7 +2,7 @@
 
 영어 독해 속도 측정기 입니다.
 
-<img src="doc/images/main.png">
+<img alt="main image" src="doc/images/main.png">
 
 ```bash
 # Mac의 경우 처음 빌드하려고 하면, 권한 문제가 발생.
